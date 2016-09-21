@@ -1,7 +1,7 @@
 class MyFooter < ActiveAdmin::Component
   def build
     super(id: "footer")
-    para "版权所有 #{Date.today.year} #{CommonConfig.app_name}"
+    # para "版权所有 #{Date.today.year} #{CommonConfig.app_name}"
   end
 end
 
@@ -11,7 +11,7 @@ ActiveAdmin.setup do |config|
   # Set the title that is displayed on the main layout
   # for each of the active admin pages.
   #
-  config.site_title = "#{CommonConfig.app_name}"
+  # config.site_title = "#{CommonConfig.app_name}"
   
   config.namespace :cpanel do |admin|
     admin.build_menu do |menu|

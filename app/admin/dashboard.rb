@@ -19,15 +19,6 @@ ActiveAdmin.register_page "Dashboard" do
             column 'Token', sortable: false do |u|
               u.private_token
             end
-            column '益豆' do |u|
-              u.bean
-            end
-            column '余额' do |u|
-              u.balance
-            end
-            column '剩余网时' do |u|
-              "#{u.wifi_status.try(:wifi_length)}分钟"
-            end
             column :verified, sortable: false
             column :created_at
           end

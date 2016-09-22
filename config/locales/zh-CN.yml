@@ -21,7 +21,7 @@
       user: "用户"
       admin: "管理员"
       cpanel: '后台系统' # 此处并不存在真正意义的model，只是为了后台系统的面包屑导航根地址国际化成中文
-      access_point: 'WIFI热点'
+      organization: '校友组织'
       category: "类别"
       banner: "广告"
       site_config: "站点配置"
@@ -67,10 +67,12 @@
         mac_addr: "MAC地址"
         wifi_length: "WIFI上网时长"
         nb_code: "邀请码"
-      wifi_charge_plan:
-        cid: '套餐ID'
-        hour: '充值时长（单位小时）'
-        cost: '需要益豆'
+      organization:
+        name: '校友组织名称'
+        users_count: '校友人数'
+        intro: '简介'
+        detail_images: '校友组织简介'
+        sort: '显示顺序'
       wifi_status:
         token: '上网Token'
         wifi_length: '可用上网时间（分钟）'

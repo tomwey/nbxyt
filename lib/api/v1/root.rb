@@ -11,9 +11,12 @@ module API
         is_pro = Rails.env.production?
         # 如果访问的是API文档，那么不做判断
         is_api_doc_path = request.path.include? "swagger_doc"
-        encode_str = Base64.urlsafe_encode64(SiteConfig.api_key + params[:i].to_s)
-        if is_pro && !is_api_doc_path && ( encode_str != params[:ak] or (Time.now.to_i - params[:i].to_i) > SiteConfig.access_key_expire_in.to_i )
-          error!({"code" => 403, "message" => "没有访问权限"}, 403)
+        
+        if is_pro && !is_api_doc_path
+          encode_str = Base64.urlsafe_encode64(SiteConfig.api_key + params[:i].to_s)
+          if ( encode_str != params[:ak] or (Time.now.to_i - params[:i].to_i) > SiteConfig.access_key_expire_in.to_i )
+            error!({"code" => 403, "message" => "没有访问权限"}, 403)
+          end
         end
       end
       
@@ -30,7 +33,7 @@ module API
       mount API::V1::ProductsAPI
       mount API::V1::ShipmentsAPI
       mount API::V1::OrdersAPI
-      mount API::V1::AdTasksAPI
+      mount API::V1::OrganizationsAPI
       mount API::V1::MessagesAPI
       mount API::V1::FollowTasksAPI
       mount API::V1::ShareTasksAPI

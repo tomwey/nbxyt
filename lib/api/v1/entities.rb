@@ -10,22 +10,6 @@ module API
         # expose :created_at, format_with: :chinese_datetime
       end # end Base
       
-      # 版本信息
-      class AppVersion < Base
-        expose :version
-        expose :app_download_url do |model, opts|
-          if model.file
-            model.file.url
-          else
-            ''
-          end
-        end
-        expose :must_upgrade
-        expose :link do |model, opts|
-          model.version_summary_url
-        end
-      end
-      
       # 收货地址
       class Shipment < Base
         expose :name
@@ -46,17 +30,30 @@ module API
         expose :avatar do |model, opts|
           model.avatar.blank? ? "" : model.avatar_url(:large)
         end
-        expose :nb_code, as: :invite_code
-        expose :bean
-        expose :balance
-        expose :current_shipment, as: :shipment, using: API::V1::Entities::Shipment, if: proc { |u| u.current_shipment_id.present? }
-        # expose :wifi_length
-        expose :qrcode_url
       end
       
       # 用户详情
       class User < UserProfile
         expose :private_token, as: :token, format_with: :null
+      end
+      
+      # 校友组织信息
+      class Organization < Base
+        expose :name, :users_count
+      end
+      
+      class OrganizationDetail < Base
+        expose :name, :users_count
+        expose :detail_images do |model, opts|
+          images = []
+          model.detail_images.each do |img|
+            images << img.url(:large)
+          end
+          images
+        end
+        expose :users, using: API::V1::Entities::UserProfile do |model, opts|
+          model.users.order('users.id desc').limit(3)
+        end
       end
       
       # 供应商

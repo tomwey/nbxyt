@@ -15,4 +15,22 @@ class Event < ActiveRecord::Base
       image.url(:large)
     end
   end
+  
+  def has_attended_for?(opts)
+    if opts.blank?
+      false
+    else
+      opts = opts[:opts]
+      if opts.blank?
+        false
+      else
+        user = opts[:user]
+        if user.blank?
+          false
+        else
+          user.has_attended?(self)
+        end
+      end
+    end
+  end
 end

@@ -43,6 +43,9 @@ module API
         expose :image_url, as: :image
         expose :started_at, format_with: :chinese_datetime
         expose :ended_at, format_with: :chinese_datetime
+        expose :has_attended do |model, opts|
+          model.has_attended_for?(opts)
+        end
       end
       
       # 校友组织信息

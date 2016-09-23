@@ -71,6 +71,12 @@ class User < ActiveRecord::Base
     BCrypt::Password.new(self.pay_password_digest) == password
   end
   
+  def has_attended?(event)
+    return false if event.blank?
+    
+    Attend.where(user_id: self.id, event_id: event.id).count > 0
+  end
+  
   def has_joined?(joinable)
     return false if joinable.blank?
     

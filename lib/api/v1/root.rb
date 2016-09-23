@@ -33,6 +33,8 @@ module API
       mount API::V1::ClubsAPI
       mount API::V1::RepliesAPI
       mount API::V1::RelationshipsAPI
+      mount API::V1::AttendsAPI
+      mount API::V1::EventsAPI
       # 
       # 配合trix文本编辑器
       # mount API::V1::AttachmentsAPI

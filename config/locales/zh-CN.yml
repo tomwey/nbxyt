@@ -5,6 +5,7 @@
     site_editor: '站点编辑'
     organization_manager: '校友会管理员'
     club_manager: '校友俱乐部管理员'
+    college_manager: '大学学院管理员'
     pending: '待处理'
     paid: '待配送'
     shipping: '配送中'
@@ -20,6 +21,9 @@
       event: '活动'
       club: '校友俱乐部'
       reply: '留言'
+      college: '大学学院'
+      mentor: '校友导师'
+      company: '校友基地'
       category: "类别"
       banner: "广告"
       site_config: "站点配置"
@@ -71,6 +75,24 @@
         content: '内容'
         replyable_type: '留言对象类型'
         replyable_id: '留言对象'
+      college:
+        name: '学院名称'
+        mentors_count: '导师人数'
+        admin_id: '学院管理员'
+      mentor:
+        name: '导师姓名'
+        college_id: '所属学院'
+        user_id: '所属用户'
+        verified: '是否认证'
+      company:
+        name: '公司名称'
+        address: '地址'
+        intro: '公司简介'
+        image: '公司封面图'
+        link: '公司网址'
+        mentor_id: '所有者'
+        mentor: '所有者'
+        sort: '显示顺序'
       page:
         title: '标题'
         body:  '内容'

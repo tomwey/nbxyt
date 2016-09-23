@@ -25,22 +25,11 @@ module API
       mount API::V1::AuthCodesAPI
       mount API::V1::UsersAPI
       mount API::V1::BannersAPI
-      mount API::V1::PayAPI
-      mount API::V1::ApartmentsAPI
-      mount API::V1::BusinessAuthInfoAPI
-      mount API::V1::CheckinsAPI
-      mount API::V1::EarningsAPI
       mount API::V1::ProductsAPI
       mount API::V1::ShipmentsAPI
       mount API::V1::OrdersAPI
       mount API::V1::OrganizationsAPI
       mount API::V1::MessagesAPI
-      mount API::V1::FollowTasksAPI
-      mount API::V1::ShareTasksAPI
-      mount API::V1::ChannelsAPI
-      mount API::V1::AppVersionsAPI
-      mount API::V1::WithdrawsAPI
-      mount API::V1::WifiAPI
       
       # 
       # 配合trix文本编辑器

@@ -19,14 +19,19 @@ class Admin < ActiveRecord::Base
     admin? || self.role.to_sym == :site_editor
   end
   
-  # 市场人员
-  def marketer?
-    admin? || self.role.to_sym == :marketer
+  # 校友会管理员
+  def organization_manager?
+    admin? || self.role.to_sym == :organization_manager
+  end
+  
+  # 校友俱乐部管理员
+  def club_manager?
+    admin? || self.role.to_sym == :club_manager
   end
   
   def self.roles
-    if SiteConfig.roles
-      SiteConfig.roles.split(',')
+    if CommonConfig.roles
+      CommonConfig.roles.split(',')
     else
       []
     end

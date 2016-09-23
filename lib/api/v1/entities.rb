@@ -37,13 +37,20 @@ module API
         expose :private_token, as: :token, format_with: :null
       end
       
+      # 活动
+      class Event < Base
+        expose :title
+        expose :image_url, as: :image
+        expose :started_at, format_with: :chinese_datetime
+        expose :ended_at, format_with: :chinese_datetime
+      end
+      
       # 校友组织信息
       class Organization < Base
         expose :name, :users_count
       end
       
-      class OrganizationDetail < Base
-        expose :name, :users_count
+      class OrganizationDetail < Organization
         expose :detail_images do |model, opts|
           images = []
           model.detail_images.each do |img|
@@ -53,6 +60,12 @@ module API
         end
         expose :users, using: API::V1::Entities::UserProfile do |model, opts|
           model.users.order('users.id desc').limit(3)
+        end
+        expose :ended_events, using: API::V1::Entities::Event do |model, opts|
+          model.events.ended.limit(5)
+        end
+        expose :latest_events, using: API::V1::Entities::Event do |model, opts|
+          model.events.latest_starting.limit(5)
         end
       end
       

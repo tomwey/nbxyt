@@ -16,7 +16,7 @@ module API
           requires :id, type: Integer, desc: '校友组织ID'
         end
         get '/:id' do
-          @organ = Organization.includes(:users).find_by(id: params[:id])
+          @organ = Organization.includes(:users, :events).find_by(id: params[:id])
           if @organ.blank?
             return render_error(4004, '没有该记录')
           end

@@ -14,11 +14,18 @@ class Ability
       cannot :manage, SiteConfig
       cannot :manage, Admin
       cannot :destroy, :all
-    elsif user.marketer?
+    elsif user.organization_manager?
       cannot :manage, :all
       can :read, :all
       cannot :read, SiteConfig
       cannot :read, Admin
+      can :manage, Organization, Event
+    elsif user.club_manager?
+      cannot :manage, :all
+      can :read, :all
+      cannot :read, SiteConfig
+      cannot :read, Admin
+      # can :manage, Club, Event
     end
   end
 end

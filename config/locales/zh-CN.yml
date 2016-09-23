@@ -3,7 +3,8 @@
     super_admin: '管理员'
     admin: '管理员'
     site_editor: '站点编辑'
-    marketer: '市场人员'
+    organization_manager: '校友会管理员'
+    club_manager: '校友俱乐部管理员'
     pending: '待处理'
     paid: '待配送'
     shipping: '配送中'
@@ -22,6 +23,7 @@
       admin: "管理员"
       cpanel: '后台系统' # 此处并不存在真正意义的model，只是为了后台系统的面包屑导航根地址国际化成中文
       organization: '校友组织'
+      event: '活动'
       category: "类别"
       banner: "广告"
       site_config: "站点配置"
@@ -72,6 +74,17 @@
         users_count: '校友人数'
         intro: '简介'
         detail_images: '校友组织简介'
+        sort: '显示顺序'
+      event:
+        title: '活动主题'
+        body: '活动详情'
+        image: '活动封面图'
+        started_at: '活动开始时间'
+        ended_at: '活动结束时间'
+        attend_count: '已报名人数'
+        total_attends: '需要人数'
+        eventable_type: '活动所属类型名'
+        eventable_id: '活动所属对象'
         sort: '显示顺序'
       wifi_status:
         token: '上网Token'

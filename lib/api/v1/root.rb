@@ -30,7 +30,9 @@ module API
       mount API::V1::OrdersAPI
       mount API::V1::OrganizationsAPI
       mount API::V1::MessagesAPI
-      
+      mount API::V1::ClubsAPI
+      mount API::V1::RepliesAPI
+      mount API::V1::RelationshipsAPI
       # 
       # 配合trix文本编辑器
       # mount API::V1::AttachmentsAPI

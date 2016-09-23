@@ -47,7 +47,8 @@ module API
       
       # 校友组织信息
       class Organization < Base
-        expose :name, :users_count
+        expose :name
+        expose :relationships_count, as: :users_count
       end
       
       class OrganizationDetail < Organization
@@ -58,6 +59,9 @@ module API
           end
           images
         end
+        expose :has_joined do |model, opts|
+          model.has_joined_for?(opts)
+        end
         expose :users, using: API::V1::Entities::UserProfile do |model, opts|
           model.users.order('users.id desc').limit(3)
         end
@@ -67,6 +71,17 @@ module API
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
           model.events.latest_starting.limit(5)
         end
+      end
+      
+      class Reply < Base
+        expose :content
+        expose :from_user, using: API::V1::Entities::UserProfile do |model, opts|
+          model.from_user
+        end
+        expose :to_user, using: API::V1::Entities::UserProfile do |model, opts|
+          model.to_user
+        end
+        expose :created_at, as: :time, format_with: :chinese_datetime
       end
       
       # 供应商

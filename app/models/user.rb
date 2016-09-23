@@ -71,31 +71,31 @@ class User < ActiveRecord::Base
     BCrypt::Password.new(self.pay_password_digest) == password
   end
   
-  def joined_organization?(organ)
-    return false if organ.blank?
+  def has_joined?(joinable)
+    return false if joinable.blank?
     
-    UserOrganization.where(user_id: self.id, organization_id: organ.id).count > 0
+    Relationship.where(user_id: self.id, relationshipable: joinable).count > 0
   end
   
-  def join_organization(organ)
-    return false if organ.blank?
+  def join!(joinable)
+    return false if joinable.blank?
     
-    UserOrganization.create!(user_id: self.id, organization_id: organ.id)
+    return false if has_joined?(joinable)
     
-    organ.users_count += 1
-    organ.save!
+    Relationship.create!(user_id: self.id, relationshipable: joinable)
+    
+    return true
   end
   
-  def cancel_join_organization(organ)
-    return false if organ.blank?
+  def cancel_join!(joinable)
+    return false if joinable.blank?
     
-    UserOrganization.where(user_id: self.id, organization_id: organ.id).delete_all
+    return false unless has_joined?(joinable)
     
-    count = organ.users_count - 1
-    if count >= 0
-      organ.users_count = count
-      organ.save!
-    end
+    rs = Relationship.where(user_id: self.id, relationshipable: joinable).first
+    rs.destroy! unless rs.blank?
+    
+    return true
   end
   
 end

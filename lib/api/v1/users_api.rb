@@ -1,6 +1,9 @@
 module API
   module V1
     class UsersAPI < Grape::API
+      
+      helpers API::SharedParams
+      
       # 用户账号管理
       resource :account, desc: "注册登录接口" do
         
@@ -212,6 +215,46 @@ module API
         end # end update pay_password
         
       end # end user resource
+      
+      # 同学录相关接口
+      resource :users, desc: '同学录相关接口' do
+        desc "获取校友信息支持搜索功能"
+        params do
+          requires :token, type: String, desc: '用户认证Token'
+          optional :q,     type: String, desc: '关键字'
+          use :pagination
+        end
+        get do
+          authenticate!
+          
+          @users = User.order('id desc')
+          if params[:q] && params[:q].strip
+            @users = @users.joins(:faculty, :specialty, :graduation).where('nickname like :q or realname like :q or mobile like :q or faculties.name like :q or specialties.name like :q or graduations.name like :q', q: "%#{params[:q].strip}%")
+          end
+          if params[:page]
+            @users = @users.paginate page: params[:page], per_page: page_size
+          end
+          
+          render_json(@users, API::V1::Entities::UserProfile)
+        end # end
+        
+        desc "获取校友详情"
+        params do
+          requires :token, type: String, desc: '用户认证Token'
+          requires :uid,   type: String, desc: '用户UID'
+        end
+        get '/:uid' do
+          authenticate!
+          
+          @user = User.find_by(uid: params[:uid])
+          
+          if @user.blank?
+            return render_error(4004, '未找到该校友')
+          end
+          
+          render_json(@user, API::V1::Entities::UserProfile)
+        end
+      end # end resource
       
     end 
   end

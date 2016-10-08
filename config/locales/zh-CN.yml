@@ -95,8 +95,13 @@
       club:
         name: '俱乐部名字'
         title: '主题'
-        body: '章程'
+        body: '详情'
         sort: '显示顺序'
+        intro: '简介'
+        bylaw: '章程'
+        image: '介绍图片'
+        founded_on: '创建日期'
+        relationships_count: '成员数'
       reply:
         sender: '发送者'
         receiver: '接收者'

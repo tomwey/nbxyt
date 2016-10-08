@@ -51,7 +51,9 @@ module API
       # 活动
       class Event < Base
         expose :title
-        expose :image_url, as: :image
+        expose :image do |model, opts|
+          model.image_url(:thumb)
+        end
         expose :started_at, format_with: :chinese_datetime
         expose :ended_at, format_with: :chinese_datetime
         expose :total_attends, as: :needed_count
@@ -287,6 +289,39 @@ module API
         end#, format_with: :null
         expose :content, as: :body
         expose :created_at, format_with: :chinese_datetime
+      end
+      
+      # 俱乐部
+      class Club < Base
+        expose :name, :title
+        expose :intro, format_with: :null
+        expose :relationships_count, as: :users_count
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:thumb)
+        end
+      end
+      # 俱乐部详情
+      class ClubDetail < Club
+        expose :founded_on, format_with: :chinese_date
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:large)
+        end
+        expose :body
+        expose :bylaw
+        expose :has_joined do |model, opts|
+          model.has_joined_for?(opts)
+        end
+        expose :latest_events, using: API::V1::Entities::Event do |model, opts|
+          model.events.latest_starting.limit(5)
+        end
+        expose :latest_users, using: API::V1::Entities::UserProfile do |model, opts|
+          model.users.order('relationships.id desc').limit(5)
+        end
+      end
+      
+      # 俱乐部章程
+      class ClubDetail2 < Base
+        expose :name, :bylaw
       end
       
       # 捐赠

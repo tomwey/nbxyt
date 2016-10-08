@@ -9,7 +9,6 @@ module API
           requires :mobile,   type: String, desc: "用户手机号"
           requires :password, type: String, desc: "密码"
           requires :code,     type: String, desc: "手机验证码"
-          optional :invite_code, type: String, desc: "邀请码，每个用户的invite_code"
         end
         post :signup do
           # 手机号检查
@@ -31,12 +30,6 @@ module API
           
           # 激活当前验证码
           auth_code.update_attribute(:activated_at, Time.now)
-          
-          # 绑定邀请
-          inviter = User.find_by(nb_code: params[:invite_code])
-          if inviter
-            inviter.invite(user)
-          end
           
           # 返回注册成功的用户
           render_json(user, API::V1::Entities::User)

@@ -30,6 +30,17 @@ module API
         expose :avatar do |model, opts|
           model.avatar.blank? ? "" : model.avatar_url(:large)
         end
+        expose :realname, format_with: :null
+        expose :stu_no, format_with: :null
+        expose :faculty do |model, opts|
+          model.faculty.try(:name) || ''
+        end
+        expose :specialty do |model, opts|
+          model.specialty.try(:name) || ''
+        end
+        expose :graduation do |model, opts|
+          model.graduation.try(:name) || ''
+        end
       end
       
       # 用户详情

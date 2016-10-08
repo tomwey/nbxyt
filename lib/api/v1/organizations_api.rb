@@ -27,6 +27,27 @@ module API
           render_json(@organ, API::V1::Entities::OrganizationDetail, { user: user })
         end # end get detail
         
+        desc "加入校友会"
+        params do
+          requires :token, type: String, desc: '用户认证Token'
+          requires :organization_id, type: Integer, desc: '校友会ID'
+        end
+        post :join do
+          user = authenticate!
+          
+          @organization = Organization.find_by(id: params[:organization_id])
+          
+          if @organization.blank?
+            return render_error(4004, '未找到该校友会')
+          end
+          
+          if user.join!(@organization)
+            render_json_no_data
+          else
+            render_error(5001, '加入校友会失败')
+          end
+        end # end post
+        
       end # end resource
       
     end

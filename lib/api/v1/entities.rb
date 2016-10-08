@@ -65,29 +65,27 @@ module API
       
       # 校友组织信息
       class Organization < Base
-        expose :name
+        expose :name, :intro
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:thumb)
+        end
         expose :relationships_count, as: :users_count
       end
       
       class OrganizationDetail < Organization
-        expose :detail_images do |model, opts|
-          images = []
-          model.detail_images.each do |img|
-            images << img.url(:large)
-          end
-          images
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:large)
         end
+        expose :founded_on, format_with: :chinese_date
+        expose :body
         expose :has_joined do |model, opts|
           model.has_joined_for?(opts)
         end
-        expose :users, using: API::V1::Entities::UserProfile do |model, opts|
-          model.users.order('users.id desc').limit(3)
-        end
-        expose :ended_events, using: API::V1::Entities::Event do |model, opts|
-          model.events.ended.limit(5)
-        end
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
           model.events.latest_starting.limit(5)
+        end
+        expose :latest_users, using: API::V1::Entities::UserProfile do |model, opts|
+          model.users.order('relationships.id desc').limit(5)
         end
       end
       

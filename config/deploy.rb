@@ -1,5 +1,6 @@
 # config valid only for Capistrano 3.1
-lock '3.5.0'
+# lock '3.5.0'
+lock '3.6.1'
 
 set :application, 'xiaoyoutong'
 set :deploy_user, "deployer"

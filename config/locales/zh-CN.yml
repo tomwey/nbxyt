@@ -41,9 +41,11 @@
       common_config: '公共配置'
     attributes:
       user:
+        uid: '用户ID'
         mobile: "手机"
         nickname: "昵称"
         avatar: "头像"
+        token: 'TOKEN'
         # signature: "个性签名"
         password: "密码"
         password_confirmation: "确认密码"
@@ -55,6 +57,8 @@
         faculty_id: '所在院系'
         specialty_id: '专业'
         graduation_id: '年级'
+        is_mentor: '是否是导师'
+        is_valid: '是否确认身份'
       faculty:
         name: '名称'
         sort: '显示顺序'

@@ -33,25 +33,29 @@ end
 index do
   selectable_column
   column :id
-  column :uid, sortable: false
-  column :nickname, sortable: false
   column :avatar, sortable: false do |u|
     u.avatar.blank? ? "" : image_tag(u.avatar.url(:normal))
   end
-  column :mobile, sortable: false
-  column 'Token', sortable: false do |u|
+  column '用户信息', sortable: false do |u|
+    raw("UID: #{u.uid}<br>昵称: #{u.nickname}<br>手机: #{u.mobile}")
+  end
+  column 'TOKEN', sortable: false do |u|
     u.private_token
   end
-  column '益豆' do |u|
-    u.bean
+  column :realname, sortable: false
+  column :stu_no, sortable: false
+  column '院系专业', sortable: false do |u|
+    u.full_school_info
   end
-  column '余额' do |u|
-    u.balance
+  column :is_mentor, sortable: false do |u|
+    u.is_mentor ? '是' : '否'
   end
-  column '剩余网时' do |u|
-    "#{u.wifi_status.try(:wifi_length)}分钟"
+  column :is_valid, sortable: false do |u|
+    u.is_valid ? '已确认' : '未确认'
   end
-  column :verified, sortable: false
+  column :verified, sortable: false do |u|
+    u.verified ? '已启用' : '已禁用'
+  end
   column :created_at
   
   actions defaults: false do |u|
@@ -60,7 +64,15 @@ index do
     else
       item "启用", unblock_cpanel_user_path(u), method: :put
     end
-    item " 充值", edit_cpanel_user_path(u)
+    if u.is_mentor
+      item "取消导师身份", cancel_mentor_cpanel_user_path(u), method: :put
+    else
+      item "成为导师", set_mentor_cpanel_user_path(u), method: :put
+    end
+    
+    if not u.is_valid
+      item "确认身份", set_valid_cpanel_user_path(u), method: :put, data: { confirm: '你确定吗？' }
+    end
   end
 end
 
@@ -88,6 +100,45 @@ end
 member_action :unblock, method: :put do
   resource.unblock!
   redirect_to collection_path, notice: "取消禁用"
+end
+
+# 批量成为导师
+batch_action :set_mentor do |ids|
+  batch_action_collection.find(ids).each do |user|
+    user.set_mentor!
+  end
+  redirect_to collection_path, alert: "已经设置成导师"
+end
+
+# 批量取消导师身份
+batch_action :cancel_mentor do |ids|
+  batch_action_collection.find(ids).each do |user|
+    user.cancel_mentor!
+  end
+  redirect_to collection_path, alert: "已经取消导师身份"
+end
+
+member_action :set_mentor, method: :put do
+  resource.set_mentor!
+  redirect_to collection_path, notice: "已经设置成导师"
+end
+
+member_action :cancel_mentor, method: :put do
+  resource.cancel_mentor!
+  redirect_to collection_path, notice: "已经取消导师身份"
+end
+
+# 确认校友身份
+batch_action :set_valid do |ids|
+  batch_action_collection.find(ids).each do |user|
+    user.set_valid!
+  end
+  redirect_to collection_path, alert: "已经确认身份"
+end
+
+member_action :set_valid, method: :put do
+  resource.set_valid!
+  redirect_to collection_path, notice: "已经确认身份"
 end
 
 # member_action :pay_in, label: '充值', method: [:get, :put] do

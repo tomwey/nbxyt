@@ -2,6 +2,10 @@ require 'rest-client'
 class User < ActiveRecord::Base  
   has_secure_password
   
+  belongs_to :faculty
+  belongs_to :specialty
+  belongs_to :graduation
+  
   validates :mobile, :password, :password_confirmation, presence: true, on: :create
   validates :mobile, format: { with: /\A1[3|4|5|7|8][0-9]\d{4,8}\z/, message: "请输入11位正确手机号" }, length: { is: 11 }, :uniqueness => true
   
@@ -24,6 +28,26 @@ class User < ActiveRecord::Base
       "avatar/#{size}.png"
     else
       avatar.url(size)
+    end
+  end
+  
+  def full_school_info
+    "#{faculty.name}/#{specialty.name}/#{graduation.name}"
+  end
+  
+  def school_info
+    "#{specialty.name}/#{graduation.name}"
+  end
+  
+  def username
+    self.nickname || self.hack_mobile
+  end
+  
+  after_save :set_uid
+  def set_uid
+    if self.uid.blank?
+      self.uid = 10000 + self.id
+      self.save!
     end
   end
   
@@ -52,6 +76,21 @@ class User < ActiveRecord::Base
   # 启用账户
   def unblock!
     self.verified = true
+    self.save!
+  end
+  
+  def set_mentor!
+    self.is_mentor = true
+    self.save!
+  end
+  
+  def cancel_mentor!
+    self.is_mentor = false
+    self.save!
+  end
+  
+  def set_valid!
+    self.is_valid = true
     self.save!
   end
   

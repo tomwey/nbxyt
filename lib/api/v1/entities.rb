@@ -326,7 +326,7 @@ module API
       class Donate < Base
         expose :title
         expose :image do |model, opts|
-          model.image.blank? ? '' : model.image.url(:big)
+          model.image.blank? ? '' : model.image.url(:thumb)
         end
         expose :intro, format_with: :null
         expose :donated_on, format_with: :chinese_date
@@ -340,7 +340,7 @@ module API
       class Article < Base
         expose :title
         expose :image do |model, opts|
-          model.image.blank? ? '' : model.image.url(:big)
+          model.image.blank? ? '' : model.image.url(:thumb)
         end
         expose :intro, format_with: :null
         expose :published_at, format_with: :chinese_date
@@ -353,12 +353,18 @@ module API
       # 基地
       class PracticeBase < Base
         expose :name, :intro
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:thumb)
+        end
         expose :user, using: API::V1::Entities::UserProfile
       end
       
       # 基地详情
       class PracticeBaseDetail < PracticeBase
         expose :body
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:large)
+        end
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
           model.events.latest_starting.limit(5)
         end

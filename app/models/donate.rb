@@ -1,7 +1,7 @@
 class Donate < ActiveRecord::Base
   validates :title, :intro, :body, :image, :donated_on, presence: true
   
-  mount_uploader :image, AvatarUploader
+  mount_uploader :image, ImageUploader
   
   def as_json(opts = {})
     {
@@ -17,7 +17,7 @@ class Donate < ActiveRecord::Base
     if image.blank?
       ''
     else
-      image.url(:big)
+      image.url(:thumb)
     end
   end
 end

@@ -11,12 +11,16 @@ index do
   column('ID',:id)
   column(:title, sortable: false)
   column :image, sortable: false do |event|
-    image_tag event.image_url
+    image_tag event.image_url(:small)
   end
   column :started_at
   column :ended_at
-  column :total_attends
-  column :attend_count
+  column '参加人数' do |event|
+    "#{event.attends_count} / #{event.total_attends}"
+  end
+  column '所有者', sortable: false do |event|
+    "【#{event.eventable.class.model_name.human}】#{event.eventable.name}"
+  end
   column :sort
   actions
 end

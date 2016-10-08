@@ -54,6 +54,8 @@ module API
         expose :image_url, as: :image
         expose :started_at, format_with: :chinese_datetime
         expose :ended_at, format_with: :chinese_datetime
+        expose :total_attends, as: :needed_count
+        expose :attends_count, as: :joined_count
         expose :has_attended do |model, opts|
           model.has_attended_for?(opts)
         end
@@ -313,6 +315,20 @@ module API
       
       class ArticleDetail < Base
         expose :title, :body
+      end
+      
+      # 基地
+      class PracticeBase < Base
+        expose :name, :intro
+        expose :user, using: API::V1::Entities::UserProfile
+      end
+      
+      # 基地详情
+      class PracticeBaseDetail < PracticeBase
+        expose :body
+        expose :latest_events, using: API::V1::Entities::Event do |model, opts|
+          model.events.latest_starting.limit(5)
+        end
       end
       
       class PayHistory < Base

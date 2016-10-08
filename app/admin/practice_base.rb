@@ -1,6 +1,6 @@
-ActiveAdmin.register Company do
+ActiveAdmin.register PracticeBase do
 
-permit_params :name, :address, :image, :sort, :mentor_id, :intro, :link
+permit_params :name, :address, :image, :sort, :user_id, :intro, :body
 
 index do
   selectable_column
@@ -16,9 +16,9 @@ index do
   end
   column :sort
   actions defaults: false do |comp|
-    item "查看", cpanel_company_path(comp)
-    item "编辑", edit_cpanel_company_path(comp)
-    item "删除", cpanel_company_path(comp), method: :delete, data: { confirm: '您确定吗？' }
+    item "查看", cpanel_practice_basis_path(comp)
+    item "编辑", edit_cpanel_practice_basis_path(comp)
+    item "删除", cpanel_practice_basis_path(comp), method: :delete, data: { confirm: '您确定吗？' }
     item "新建活动", new_cpanel_event_path(id: comp.id, type: comp.class)
   end
 end
@@ -32,8 +32,8 @@ form html: { multipart: true } do |f|
     f.input :address
     f.input :image, as: :file, hint: '图片格式为：jpg, jpeg, png, gif'
     f.input :intro
-    f.input :link, placeholder: 'http://', hint: '公司网址'
-    f.input :mentor_id, as: :select, collection: Mentor.where(verified: true).map { |mentor| [mentor.name, mentor.id] }, prompt: '-- 选择校友导师 --'
+    f.input :body, as: :text, input_html: { class: 'redactor' }, placeholder: '基地详情，支持图文混排', hint: '基地详情，支持图文混排'
+    f.input :user_id, as: :select, collection: User.where(is_mentor: true, is_valid: true, verified: true).map { |user| [user.realname, user.id] }, prompt: '-- 选择校友导师 --', required: true
     f.input :sort, hint: '值越大显示越靠前'
   end
     

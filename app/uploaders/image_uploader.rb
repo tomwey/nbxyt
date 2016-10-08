@@ -9,11 +9,11 @@ class ImageUploader < BaseUploader
   end
   
   version :thumb do
-    process resize_to_fill: [220, 150]
+    process resize_to_fill: [200, 200]
   end
   
   version :small, from_version: :thumb do
-    process resize_to_fill: [88, 60]
+    process resize_to_fill: [80, 80]
   end
 
   def filename

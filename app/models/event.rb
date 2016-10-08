@@ -8,11 +8,11 @@ class Event < ActiveRecord::Base
   
   mount_uploader :image, ImageUploader
   
-  def image_url
+  def image_url(size = :large)
     if image.blank?
       ''
     else
-      image.url(:large)
+      image.url(size)
     end
   end
   

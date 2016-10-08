@@ -1,7 +1,7 @@
 class Company < ActiveRecord::Base
-  belongs_to :mentor
+  belongs_to :user
   
-  validates :name, :address, :image, presence: true
+  validates :name, :address, :image, :body, presence: true
   
   mount_uploader :image, ImageUploader
   

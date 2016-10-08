@@ -1,5 +1,5 @@
 class Organization < ActiveRecord::Base
-  validates :name, presence: true
+  validates :name, :intro, :body, :image, :founded_on, presence: true
   
   has_many :relationships, as: :relationshipable, dependent: :destroy
   has_many :users, through: :relationships
@@ -8,7 +8,8 @@ class Organization < ActiveRecord::Base
   
   scope :sorted, -> { order('sort desc, id desc') }
   
-  mount_uploaders :detail_images, ImagesUploader
+  # mount_uploaders :detail_images, ImagesUploader
+  mount_uploader :image, ImageUploader
   
   def has_joined_for?(opts)
     if opts.blank?

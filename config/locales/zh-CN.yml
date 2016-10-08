@@ -76,10 +76,12 @@
         name: '名称'
         sort: '显示顺序'
       organization:
-        name: '校友组织名称'
-        users_count: '校友人数'
+        name: '校友会名字'
+        relationships_count: '成员数'
         intro: '简介'
-        detail_images: '校友组织简介'
+        body: '详情'
+        image: '介绍图片'
+        founded_on: '创建日期'
         sort: '显示顺序'
       event:
         title: '活动主题'

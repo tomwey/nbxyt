@@ -12,6 +12,7 @@ index do
     club.image.blank? ? '' : image_tag(club.image.url(:small))
   end
   column :relationships_count
+  column :founded_on
   # column :body,  sortable: false
   column :sort
   actions defaults: false do |club|

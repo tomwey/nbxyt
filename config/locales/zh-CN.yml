@@ -39,6 +39,10 @@
       order: '订单'
       message: '消息'
       common_config: '公共配置'
+      donate: '捐赠'
+      donate_apply: '捐赠意向'
+      node: '文章类别'
+      article: '捐赠文章'
     attributes:
       user:
         uid: '用户ID'
@@ -168,7 +172,28 @@
         state: '订单状态'
         created_at: '下单时间'
         note: '备注'
-        
+      donate:
+        title: '项目标题'
+        intro: '项目简介'
+        body:  '项目详情'
+        image: 'ICON'
+        donated_on: '捐赠日期'
+        donator_name: '捐赠人姓名'
+        donator_contact: '捐赠人联系方式'
+      donate_apply:
+        content: '捐赠介绍'
+        contact: '联系方式'
+      node:
+        name: '类别名称'
+      article:
+        node_id: '所属类别'
+        node: '所属类别'
+        title: '标题'
+        intro: '简介'
+        body: '详情'
+        image: 'ICON'
+        published_at: '发布时间'
+        slug: '标记'
     errors:
       models:
         user: "用户"

@@ -18,6 +18,7 @@ ActiveAdmin.setup do |config|
       menu.add id: 'system',      label: '系统相关', priority: 2
       menu.add id: 'user',        label: '用户',    priority: 3
       menu.add id: 'school_info', label: '学科专业', priority: 4
+      menu.add id: 'donate_info', label: '爱心捐赠', priority: 10
     end
   end
 

@@ -287,6 +287,34 @@ module API
         expose :created_at, format_with: :chinese_datetime
       end
       
+      # 捐赠
+      class Donate < Base
+        expose :title
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:big)
+        end
+        expose :intro, format_with: :null
+        expose :donated_on, format_with: :chinese_date
+      end
+      
+      # 捐赠详情
+      class DonateDetail < Base
+        expose :title, :body
+      end
+      
+      class Article < Base
+        expose :title
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:big)
+        end
+        expose :intro, format_with: :null
+        expose :published_at, format_with: :chinese_date
+      end
+      
+      class ArticleDetail < Base
+        expose :title, :body
+      end
+      
       class PayHistory < Base
         expose :pay_name, format_with: :null
         expose :created_at, format_with: :chinese_datetime

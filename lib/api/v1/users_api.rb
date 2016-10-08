@@ -4,6 +4,21 @@ module API
       
       helpers API::SharedParams
       
+      # 学校信息
+      resource :college, desc: '大学学科信息接口' do
+        desc "获取院系、专业"
+        get :specialties do
+          @faculties = Faculty.order('sort desc, id desc')
+          render_json(@faculties, API::V1::Entities::Faculty)
+        end # end get
+        
+        desc "获取年级信息"
+        get :graduations do
+          @graduations = Graduation.order('name asc')
+          render_json(@graduations, API::V1::Entities::Graduation)
+        end # end get
+      end # end resource
+      
       # 用户账号管理
       resource :account, desc: "注册登录接口" do
         
@@ -57,6 +72,33 @@ module API
             render_error(1005, "登录密码不正确")
           end
         end # end post login
+        
+        desc "完善资料"
+        params do
+          requires :token, type: String, desc: "用户Token"
+          requires :realname, type: String, desc: "真实姓名"
+          optional :stu_no, type: String, desc: "学号"
+          requires :faculty_id, type: Integer, desc: "所在院系ID"
+          requires :specialty_id, type: Integer, desc: "专业ID"
+          requires :graduation_id, type: Integer, desc: "年级ID"
+        end
+        post :update_profile do
+          user = authenticate!
+          
+          user.realname = params[:realname]
+          user.stu_no = params[:stu_no]
+          user.faculty_id = params[:faculty_id]
+          user.specialty_id = params[:specialty_id]
+          user.graduation_id = params[:graduation_id]
+          
+          if user.save!
+            render_json(user, API::V1::Entities::UserProfile)
+          else
+            render_error(1009, '完善资料失败')
+          end
+          
+        end # end post
+        
       end # end account resource
       
       resource :user, desc: "用户接口" do
@@ -82,6 +124,57 @@ module API
         #     render_error(1005, "登录密码不正确")
         #   end
         # end # end get auth
+        
+        desc "获取加入的校友组织"
+        params do
+          requires :token, type: String, desc: '用户Token'
+          use :pagination
+        end
+        get :organizations do
+          user = authenticate!
+          
+          @organs = user.organizations.order('relationships.id desc, sort desc, id desc')
+          
+          if params[:page]
+            @organs = @organs.paginate page: params[:page], per_page: page_size
+          end
+          
+          render_json(@organs, API::V1::Entities::Organization)
+        end # end get
+        
+        desc "获取加入的俱乐部"
+        params do
+          requires :token, type: String, desc: '用户Token'
+          use :pagination
+        end
+        get :clubs do
+          user = authenticate!
+          
+          @clubs = user.clubs.order('relationships.id desc, sort desc, id desc')
+          
+          if params[:page]
+            @clubs = @clubs.paginate page: params[:page], per_page: page_size
+          end
+          
+          render_json(@clubs, API::V1::Entities::Club)
+        end # end get
+        
+        desc "获取参加的活动"
+        params do
+          requires :token, type: String, desc: '用户Token'
+          use :pagination
+        end
+        get :events do
+          user = authenticate!
+          
+          @events = user.events.order('attends.id desc, started_at desc')
+          
+          if params[:page]
+            @events = @events.paginate page: params[:page], per_page: page_size
+          end
+          
+          render_json(@events, API::V1::Entities::Event)
+        end # end get
         
         desc "获取个人资料"
         params do

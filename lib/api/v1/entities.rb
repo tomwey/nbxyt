@@ -48,6 +48,21 @@ module API
         expose :private_token, as: :token, format_with: :null
       end
       
+      class Specialty < Base
+        expose :name
+      end
+      
+      class Faculty < Base
+        expose :name
+        expose :specialties, using: API::V1::Entities::Specialty do |model, opts|
+          model.specialties.order('sort desc, id desc')
+        end
+      end
+      
+      class Graduation < Base
+        expose :name
+      end
+      
       # 活动
       class Event < Base
         expose :title
@@ -56,11 +71,22 @@ module API
         end
         expose :started_at, format_with: :chinese_datetime
         expose :ended_at, format_with: :chinese_datetime
+        expose :intro
         expose :total_attends, as: :needed_count
         expose :attends_count, as: :joined_count
-        expose :has_attended do |model, opts|
-          model.has_attended_for?(opts)
+        expose :state do |model, opts|
+          model.state(opts, false)
         end
+      end
+      class EventDetail < Event
+        expose :image do |model, opts|
+          model.image_url(:large)
+        end
+        expose :body
+        expose :state do |model, opts|
+          model.state(opts, true)
+        end
+        
       end
       
       # 校友组织信息

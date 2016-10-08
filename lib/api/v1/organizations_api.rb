@@ -27,6 +27,27 @@ module API
           render_json(@organ, API::V1::Entities::OrganizationDetail, { user: user })
         end # end get detail
         
+        desc "获取所有的成员"
+        params do
+          requires :id, type: Integer, desc: '校友会组织ID'
+          use :pagination
+        end
+        get '/:id/users' do
+          @organ = Organization.find_by(id: params[:id])
+          
+          if @organ.blank?
+            return render_error(4004, '没有该记录')
+          end
+          
+          @users = @organ.users.order('relationships.id desc')
+          
+          if params[:page]
+            @users = @users.paginate page: params[:page], per_page: page_size
+          end
+          
+          render_json(@users, API::V1::Entities::UserProfile)
+        end # end get
+        
         desc "加入校友会"
         params do
           requires :token, type: String, desc: '用户认证Token'

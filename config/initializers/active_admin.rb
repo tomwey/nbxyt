@@ -15,8 +15,9 @@ ActiveAdmin.setup do |config|
   
   config.namespace :cpanel do |admin|
     admin.build_menu do |menu|
-      menu.add id: 'system', label: '系统相关', priority: 2
-      menu.add id: 'user', label: '用户', priority: 3
+      menu.add id: 'system',      label: '系统相关', priority: 2
+      menu.add id: 'user',        label: '用户',    priority: 3
+      menu.add id: 'school_info', label: '学科专业', priority: 4
     end
   end
 

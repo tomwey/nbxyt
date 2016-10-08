@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   
   validates :mobile, :password, :password_confirmation, presence: true, on: :create
   validates :mobile, format: { with: /\A1[3|4|5|7|8][0-9]\d{4,8}\z/, message: "请输入11位正确手机号" }, length: { is: 11 }, :uniqueness => true
+  
+  validates :realname, :faculty_id, :specialty_id, :graduation_id, presence: true
             
   mount_uploader :avatar, AvatarUploader
   

@@ -19,7 +19,7 @@ index do
     item "查看", cpanel_practice_basis_path(comp)
     item "编辑", edit_cpanel_practice_basis_path(comp)
     item "删除", cpanel_practice_basis_path(comp), method: :delete, data: { confirm: '您确定吗？' }
-    item "新建活动", new_cpanel_event_path(id: comp.id, type: comp.class)
+    item "新建活动", new_cpanel_event_path(owner_id: comp.id, owner_type: comp.class)
   end
 end
 

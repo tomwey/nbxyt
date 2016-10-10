@@ -16,7 +16,7 @@ index do
   actions defaults: false do |organ|
     item "编辑", edit_cpanel_organization_path(organ)
     item "删除", cpanel_organization_path(organ), method: :delete, data: { confirm: '您确定吗？' }
-    item "新建活动", new_cpanel_event_path(type: organ.class, id: organ.id), method: :get
+    item "新建活动", new_cpanel_event_path(owner_type: organ.class, owner_id: organ.id), method: :get
   end
 end
 

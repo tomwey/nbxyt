@@ -7,20 +7,20 @@ module API
       resource :events, desc: '活动接口' do
         desc "获取活动列表"
         params do
-          optional :eventable_type, type: String, desc: "所属类型，可能的值为：Organization, Club, PracticeBase"
-          optional :eventable_id,   type: Integer, desc: "所属的具体类型ID"
+          optional :owner_type, type: String, desc: "所属类型，可能的值为：Organization, Club, PracticeBase"
+          optional :owner_id,   type: Integer, desc: "所属的具体类型ID"
           use :pagination
         end
         get do
           @events = Event.order('sort desc, started_at desc')
           
-          if params[:eventable_id]
-            if params[:eventable_type].blank?
-              return render_error(-1, '需要eventable_type参数')
+          if params[:owner_id]
+            if params[:owner_type].blank?
+              return render_error(-1, '需要owner_type参数')
             end
-            @events = @events.where(eventable_type: params[:eventable_type], eventable_id: params[:eventable_id])
+            @events = @events.where(eventable_type: params[:owner_type], eventable_id: params[:owner_id])
           else
-            @events = @events.where(eventable_type: params[:eventable_type])
+            @events = @events.where(eventable_type: params[:owner_type])
           end
           
           if params[:page]

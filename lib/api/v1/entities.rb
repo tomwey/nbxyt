@@ -71,7 +71,7 @@ module API
         end
         expose :started_at, format_with: :chinese_datetime
         expose :ended_at, format_with: :chinese_datetime
-        expose :intro
+        # expose :intro
         expose :total_attends, as: :needed_count
         expose :attends_count, as: :joined_count
         expose :state do |model, opts|

@@ -28,7 +28,7 @@ index do
   column :sort
   actions defaults: false do |event|
     item "查看", cpanel_event_path(event)
-    item "编辑", "#{edit_cpanel_event_path(event)}?type=#{event.eventable.class}&id=#{event.eventable.id}"
+    item "编辑", "#{edit_cpanel_event_path(event)}?type=#{event.eventable.try(:class)}&id=#{event.eventable.try(:id)}"
     item "删除", cpanel_event_path(event), method: :delete, data: { confirm: '您确定吗？' }
   end
 end

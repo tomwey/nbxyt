@@ -19,7 +19,11 @@ index do
     "#{event.attends_count} / #{event.total_attends}"
   end
   column '所有者', sortable: false do |event|
-    "【#{event.eventable.class.model_name.human}】#{event.eventable.name}"
+    if event.eventable
+      "【#{event.eventable.class.model_name.human}】#{event.eventable.name}"
+    else
+      ""
+    end
   end
   column :sort
   actions defaults: false do |event|

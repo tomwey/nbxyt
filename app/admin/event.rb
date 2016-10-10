@@ -22,7 +22,11 @@ index do
     "【#{event.eventable.class.model_name.human}】#{event.eventable.name}"
   end
   column :sort
-  actions
+  actions defaults: false do |event|
+    item "查看", cpanel_event_path(event)
+    item "编辑", "#{edit_cpanel_event_path(event)}?type=#{event.eventable.class}&id=#{event.eventable.id}"
+    item "删除", cpanel_event_path(event), method: :delete, data: { confirm: '您确定吗？' }
+  end
 end
 
 form html: { multipart: true } do |f|

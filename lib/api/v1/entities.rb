@@ -77,9 +77,7 @@ module API
         expose :state do |model, opts|
           model.state(opts, false)
         end
-        expose :eventable_type do |model, opts|
-          model.eventable.class
-        end
+        expose :eventable_type
       end
       class EventDetail < Event
         expose :image do |model, opts|

@@ -14,7 +14,7 @@ index do
   column(:title, sortable: false) { |donate| link_to donate.title, cpanel_donate_path(donate) }
   column :intro, sortable: false
   column :image, sortable: false do |donate|
-    donate.image.blank? ? '' : image_tag(donate.image.url(:large))
+    donate.image.blank? ? '' : image_tag(donate.image.url(:small))
   end
   column :donated_on
   column :donator_name, sortable: false

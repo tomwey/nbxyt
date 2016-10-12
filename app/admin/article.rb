@@ -20,7 +20,7 @@ index do
   column(:title, sortable: false) { |article| link_to article.title, cpanel_article_path(article) }
   column :intro, sortable: false
   column :image, sortable: false do |article|
-    article.image.blank? ? '' : image_tag(article.image.url(:large))
+    article.image.blank? ? '' : image_tag(article.image.url(:small))
   end
   column :published_at
   column '创建时间', :created_at

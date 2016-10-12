@@ -48,6 +48,27 @@ module API
           render_json(@club, API::V1::Entities::ClubDetail2)
         end # end get
         
+        desc "获取所有的成员"
+        params do
+          requires :id, type: Integer, desc: '俱乐部ID'
+          use :pagination
+        end
+        get '/:id/users' do
+          @club = Club.find_by(id: params[:id])
+          
+          if @club.blank?
+            return render_error(4004, '没有该记录')
+          end
+          
+          @users = @club.users.order('relationships.id desc')
+          
+          if params[:page]
+            @users = @users.paginate page: params[:page], per_page: page_size
+          end
+          
+          render_json(@users, API::V1::Entities::UserProfile)
+        end # end get
+        
         desc "加入俱乐部"
         params do
           requires :token, type: String, desc: '用户认证Token'

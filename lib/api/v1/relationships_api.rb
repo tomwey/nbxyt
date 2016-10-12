@@ -2,6 +2,8 @@ module API
   module V1
     class RelationshipsAPI < Grape::API
       
+      helpers API::SharedParams
+      
       resource :relationships, desc: '加入校友会、俱乐部相关接口' do
         desc "加入校友会"
         params do 

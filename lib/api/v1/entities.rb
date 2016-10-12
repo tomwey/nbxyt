@@ -48,6 +48,21 @@ module API
         expose :private_token, as: :token, format_with: :null
       end
       
+      class Specialty < Base
+        expose :name
+      end
+      
+      class Faculty < Base
+        expose :name
+        expose :specialties, using: API::V1::Entities::Specialty do |model, opts|
+          model.specialties.order('sort desc, id desc')
+        end
+      end
+      
+      class Graduation < Base
+        expose :name
+      end
+      
       # 活动
       class Event < Base
         expose :title
@@ -56,38 +71,47 @@ module API
         end
         expose :started_at, format_with: :chinese_datetime
         expose :ended_at, format_with: :chinese_datetime
+        # expose :intro
         expose :total_attends, as: :needed_count
         expose :attends_count, as: :joined_count
-        expose :has_attended do |model, opts|
-          model.has_attended_for?(opts)
+        expose :state do |model, opts|
+          model.state(opts, false)
         end
+      end
+      class EventDetail < Event
+        expose :image do |model, opts|
+          model.image_url(:large)
+        end
+        expose :body
+        expose :state do |model, opts|
+          model.state(opts, true)
+        end
+        
       end
       
       # 校友组织信息
       class Organization < Base
-        expose :name
+        expose :name, :intro
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:thumb)
+        end
         expose :relationships_count, as: :users_count
       end
       
       class OrganizationDetail < Organization
-        expose :detail_images do |model, opts|
-          images = []
-          model.detail_images.each do |img|
-            images << img.url(:large)
-          end
-          images
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:large)
         end
+        expose :founded_on, format_with: :chinese_date
+        expose :body
         expose :has_joined do |model, opts|
           model.has_joined_for?(opts)
         end
-        expose :users, using: API::V1::Entities::UserProfile do |model, opts|
-          model.users.order('users.id desc').limit(3)
-        end
-        expose :ended_events, using: API::V1::Entities::Event do |model, opts|
-          model.events.ended.limit(5)
-        end
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
           model.events.recent.limit(5)
+        end
+        expose :latest_users, using: API::V1::Entities::UserProfile do |model, opts|
+          model.users.order('relationships.id desc').limit(5)
         end
       end
       
@@ -328,7 +352,7 @@ module API
       class Donate < Base
         expose :title
         expose :image do |model, opts|
-          model.image.blank? ? '' : model.image.url(:big)
+          model.image.blank? ? '' : model.image.url(:thumb)
         end
         expose :intro, format_with: :null
         expose :donated_on, format_with: :chinese_date
@@ -342,7 +366,7 @@ module API
       class Article < Base
         expose :title
         expose :image do |model, opts|
-          model.image.blank? ? '' : model.image.url(:big)
+          model.image.blank? ? '' : model.image.url(:thumb)
         end
         expose :intro, format_with: :null
         expose :published_at, format_with: :chinese_date
@@ -355,12 +379,18 @@ module API
       # 基地
       class PracticeBase < Base
         expose :name, :intro
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:thumb)
+        end
         expose :user, using: API::V1::Entities::UserProfile
       end
       
       # 基地详情
       class PracticeBaseDetail < PracticeBase
         expose :body
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:large)
+        end
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
           model.events.recent.limit(5)
         end

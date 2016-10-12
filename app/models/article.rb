@@ -2,7 +2,7 @@ class Article < ActiveRecord::Base
   validates :title, :body, :node_id, presence: true
   belongs_to :node
   
-  mount_uploader :image, AvatarUploader
+  mount_uploader :image, ImageUploader
   
   before_save :set_published_at
   def set_published_at
@@ -25,7 +25,7 @@ class Article < ActiveRecord::Base
     if image.blank?
       ''
     else
-      image.url(:big)
+      image.url(:thumb)
     end
   end
   

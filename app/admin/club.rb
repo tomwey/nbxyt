@@ -19,7 +19,7 @@ index do
     item "查看", cpanel_club_path(club)
     item "编辑", edit_cpanel_club_path(club)
     item "删除", cpanel_club_path(club), method: :delete, data: { confirm: '您确定吗？' }
-    item "新建活动", new_cpanel_event_path(id: club.id, type: club.class)
+    item "新建活动", new_cpanel_event_path(owner_id: club.id, owner_type: club.class)
   end
 end
 

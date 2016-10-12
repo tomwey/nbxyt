@@ -6,6 +6,13 @@ class User < ActiveRecord::Base
   belongs_to :specialty
   belongs_to :graduation
   
+  has_many :relationships
+  has_many :attends
+  
+  has_many :organizations, through: :relationships, source: :relationshipable, source_type: 'Organization'
+  has_many :clubs, through: :relationships, source: :relationshipable, source_type: 'Club'
+  has_many :events, through: :attends
+  
   validates :mobile, :password, :password_confirmation, presence: true, on: :create
   validates :mobile, format: { with: /\A1[3|4|5|7|8][0-9]\d{4,8}\z/, message: "请输入11位正确手机号" }, length: { is: 11 }, :uniqueness => true
   

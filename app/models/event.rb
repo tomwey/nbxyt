@@ -17,6 +17,28 @@ class Event < ActiveRecord::Base
     end
   end
   
+  def state(opts, from_detail)
+    result = {}
+    if self.ended_at < Time.zone.now
+      result[:label] = '已结束'
+      result[:can_attend] = false
+    else
+      if from_detail
+        if has_attended_for?(opts)
+          result[:label] = '已报名'
+          result[:can_attend] = false
+        else
+          result[:label] = '报名参加'
+          result[:can_attend] = true
+        end
+      else
+        result[:label] = '可参加'
+        result[:can_attend] = true
+      end
+    end
+    result
+  end
+  
   def has_attended_for?(opts)
     if opts.blank?
       false

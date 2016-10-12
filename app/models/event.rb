@@ -5,6 +5,7 @@ class Event < ActiveRecord::Base
   
   scope :latest_starting, -> { where('started_at > ?', Time.zone.now).order('started_at asc') } 
   scope :ended, -> { where('ended_at < ?', Time.zone.now).order('ended_at desc') }
+  scope :recent, -> { order('started_at desc, id desc') }
   
   mount_uploader :image, ImageUploader
   

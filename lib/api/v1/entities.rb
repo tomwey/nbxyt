@@ -87,7 +87,7 @@ module API
           model.events.ended.limit(5)
         end
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
-          model.events.latest_starting.limit(5)
+          model.events.recent.limit(5)
         end
       end
       
@@ -312,7 +312,7 @@ module API
           model.has_joined_for?(opts)
         end
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
-          model.events.latest_starting.limit(5)
+          model.events.recent.limit(5)
         end
         expose :latest_users, using: API::V1::Entities::UserProfile do |model, opts|
           model.users.order('relationships.id desc').limit(5)
@@ -362,7 +362,7 @@ module API
       class PracticeBaseDetail < PracticeBase
         expose :body
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
-          model.events.latest_starting.limit(5)
+          model.events.recent.limit(5)
         end
       end
       

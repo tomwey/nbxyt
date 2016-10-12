@@ -82,12 +82,14 @@ module API
           return render_error(4004, '没有该类别') if @type.blank?
           
           @articles = Article.where(node_id: @type.id).order('published_at desc, id desc')
+          total = @articles.size
           if params[:page]
             @articles = @articles.paginate page: params[:page], per_page: page_size
+            total = @articles.total_entries;
           end
           
           # render_json(@articles, API::V1::Entities::Article)
-          { code: 0, message: 'ok', data: { node: @type.as_json, data: @articles.as_json } }
+          { code: 0, message: 'ok', data: { node: @type.as_json, data: @articles.as_json, total: total } }
         end # end get
         
         desc "获取文章详情"

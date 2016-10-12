@@ -368,9 +368,9 @@ module API
         expose :image do |model, opts|
           model.image.blank? ? '' : model.image.url(:thumb)
         end
-        expose :has_image do |model, opts|
-          model.image.present?
-        end
+        # expose :has_image do |model, opts|
+        #   model.image.present?
+        # end
         expose :intro, format_with: :null
         expose :published_at, format_with: :chinese_date
       end

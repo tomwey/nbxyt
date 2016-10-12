@@ -18,7 +18,7 @@ class Article < ActiveRecord::Base
       intro: self.intro || '',
       image: self.image_url,
       published_at: self.published_at.strftime('%Y-%m-%d'),
-      has_image: self.image.present?,
+      # has_image: self.image.present?,
       node: {
         id: node.id,
         name: node.name,

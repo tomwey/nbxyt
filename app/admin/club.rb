@@ -32,7 +32,7 @@ form html: { multipart: true } do |f|
     f.input :image, as: :file, hint: '图片格式为：jpg, jpeg, png, gif'
     f.input :intro
     f.input :body, as: :text, input_html: { class: 'redactor' }, placeholder: '详情，支持图文混排', hint: '详情，支持图文混排'
-    f.input :bylaw, as: :text
+    f.input :bylaw, as: :text, input_html: { class: 'redactor' }, placeholder: '俱乐部章程，支持图文混排', hint: '俱乐部章程, 支持图文混排'
     f.input :founded_on, as: :string, placeholder: '例如：2016-01-01'
     f.input :sort, hint: '值越大显示越靠前'
   end

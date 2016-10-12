@@ -11,14 +11,14 @@ module API
           
           @donates = Donate.order('donated_on desc, id desc').limit(5)
           if @donates.any?
-            result[:donates] = { data: @donates.as_json, has_more: @donates.size > 5 }
+            result[:donates] = { data: @donates.as_json, has_more: @donates.size >= 5 }
           end
           
           @node = Node.find_by(name: '相关报道')
           if @node
             @articles_1 = Article.where(node_id: @node.id).order('published_at desc, id desc').limit(5)
             if @articles_1.any?
-              result[:reports] = { data: @articles_1.as_json, has_more: @articles_1.size > 5 }
+              result[:reports] = { data: @articles_1.as_json, has_more: @articles_1.size >= 5, type_id: @node.id }
             end
           end
           
@@ -26,7 +26,7 @@ module API
           if @node2
             @articles_2 = Article.where(node_id: @node2.id).order('published_at desc, id desc').limit(5)
             if @articles_2.any?
-              result[:thanks] = { data: @articles_2.as_json, has_more: @articles_2.size > 5 }
+              result[:thanks] = { data: @articles_2.as_json, has_more: @articles_2.size >= 5, type_id: @node2.id }
             end
           end
           
@@ -86,7 +86,8 @@ module API
             @articles = @articles.paginate page: params[:page], per_page: page_size
           end
           
-          render_json(@articles, API::V1::Entities::Article)
+          # render_json(@articles, API::V1::Entities::Article)
+          { code: 0, message: 'ok', data: { node: @type.as_json, data: @articles.as_json } }
         end # end get
         
         desc "获取文章详情"

@@ -9,7 +9,7 @@ module API
         get '/:slug' do
           @page = Page.find_by(slug: params[:slug])
           
-          return render_error(4004, '未找到文档')
+          return render_error(4004, '未找到文档') if @page.blank?
           
           render_json(@page, API::V1::Entities::Page)
         end # end get

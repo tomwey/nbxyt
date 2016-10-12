@@ -37,7 +37,7 @@ module API
         params do
           use :pagination
         end
-        get :list do
+        get do
           @donates = Donate.order('donated_on desc, id desc')
           if params[:page]
             @donates = @donates.paginate page: params[:page], per_page: page_size

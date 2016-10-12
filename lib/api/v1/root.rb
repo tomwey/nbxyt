@@ -37,6 +37,7 @@ module API
       mount API::V1::EventsAPI
       mount API::V1::DonatesAPI
       mount API::V1::PracticeBasesAPI
+      mount API::V1::PagesAPI
       # 
       # 配合trix文本编辑器
       # mount API::V1::AttachmentsAPI

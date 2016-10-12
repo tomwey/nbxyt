@@ -451,23 +451,9 @@ module API
         expose :link, format_with: :null
       end
       
-      # 上网的状态
-      class WifiStatus < Base
-        expose :wifi_length, :login_count
-        expose :last_login_at, format_with: :chinese_datetime
-        expose :wifi_online
-        expose :wifi_mac, as: :mac
-        expose :ap_list do |model, opts|
-          if opts.blank? or opts[:opts].blank? or opts[:opts][:ap_list].blank?
-            []
-          else
-            opts[:opts][:ap_list]
-          end
-        end
-      end
-      
-      class WifiChargePlan < Base
-        expose :cid, :hour, :cost
+      # wiki
+      class Page < Base
+        expose :title, :body, :slug
       end
     
     end

@@ -63,6 +63,13 @@ module API
         expose :name
       end
       
+      class Eventable < Base
+        expose :name, :intro
+        expose :image do |model, opts|
+          model.image.blank? ? '' : model.image.url(:thumb)
+        end
+      end
+      
       # 活动
       class Event < Base
         expose :title
@@ -78,6 +85,7 @@ module API
           model.state(opts, false)
         end
         expose :eventable_type
+        expose :eventable, as: :owner, using: API::V1::Entities::Eventable
       end
       class EventDetail < Event
         expose :image do |model, opts|

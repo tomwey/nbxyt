@@ -40,6 +40,9 @@ class Event < ActiveRecord::Base
   end
   
   def has_attended_for?(opts)
+    if self.eventable_type == 'Organization' # 校友会的活动不需要参加
+      return true
+    end
     if opts.blank?
       false
     else

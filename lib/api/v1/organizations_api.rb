@@ -23,7 +23,7 @@ module API
         
         desc "获取校友组织信息"
         get do
-          @organs = Organization.sorted
+          @organs = Organization.where.not(name: '校友总会').sorted
           render_json(@organs, API::V1::Entities::Organization)
         end # end get
         

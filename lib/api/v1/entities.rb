@@ -95,6 +95,9 @@ module API
         expose :state do |model, opts|
           model.state(opts, true)
         end
+        expose :has_attended do |model, opts|
+          model.has_attended_for?(opts)
+        end
         
       end
       

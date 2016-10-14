@@ -1,6 +1,6 @@
 ActiveAdmin.register Organization do
 
-permit_params :name, :intro, :sort, :image, :body, :founded_on
+permit_params :name, :intro, :sort, :image, :body, :founded_on, { images: [] }
 
 index do
   selectable_column
@@ -25,9 +25,10 @@ form html: { multipart: true } do |f|
   
   f.inputs do
     f.input :name
-    f.input :image, as: :file, hint: '图片格式为：jpg, jpeg, png, gif'
+    f.input :image, as: :file, hint: '图片格式为：jpg, jpeg, png, gif，尺寸为750x512或者是这个长宽比的图片'
     f.input :intro
     f.input :body, as: :text, input_html: { class: 'redactor' }, placeholder: '详情，支持图文混排', hint: '详情，支持图文混排'
+    f.input :images, as: :file, input_html: { multiple: true }, hint: '图片格式为：jpg, jpeg, png, gif，尺寸为750x512或者是这个长宽比的图片'
     f.input :founded_on, as: :string, placeholder: '例如：2016-01-01'
     f.input :sort, hint: '值越大显示越靠前'
   end

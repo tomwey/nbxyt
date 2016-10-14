@@ -10,6 +10,23 @@ class Organization < ActiveRecord::Base
   
   # mount_uploaders :detail_images, ImagesUploader
   mount_uploader :image, ImageUploader
+  mount_uploaders :images, ImagesUploader
+  
+  def all_users_count
+    @total ||= Organization.where.not(name: '校友总会').sum(:relationships_count)
+  end
+  
+  def all_images
+    result = []
+    images.each do |image|
+      result << image.url(:large)
+    end
+    result
+  end
+  
+  def all_latest_events
+    @events ||= Event.where(eventable_type: 'Organization').order('started_at desc, id desc').limit(5)
+  end
   
   def has_joined_for?(opts)
     if opts.blank?

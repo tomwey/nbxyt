@@ -124,6 +124,25 @@ module API
         end
       end
       
+      # 校友总会信息
+      class OrganizationAssoc < Organization
+        expose :users_count do |model, opts|
+          model.all_users_count
+        end
+      end
+      
+      class OrganizationAssocDetail < OrganizationAssoc
+        unexpose :image
+        expose :images do |model, opts|
+          model.all_images
+        end
+        expose :founded_on, format_with: :chinese_date
+        expose :body
+        expose :latest_events, using: API::V1::Entities::Event do |model, opts|
+          model.all_latest_events
+        end
+      end
+      
       class Reply < Base
         expose :content
         expose :from_user, using: API::V1::Entities::UserProfile do |model, opts|

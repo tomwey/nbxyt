@@ -5,6 +5,22 @@ module API
       helpers API::SharedParams
       
       resource :organizations, desc: '校友组织相关接口' do
+        desc "获取校友总会信息"
+        get :assoc do
+          @organ = Organization.find_by(name: '校友总会')
+          return render_error(4004, '未找到校友总会') if @organ.blank?
+          
+          render_json(@organ, API::V1::Entities::OrganizationAssoc)
+        end # end get
+        
+        desc "获取校友总会详情"
+        get '/assoc/body' do
+          @organ = Organization.find_by(name: '校友总会')
+          return render_error(4004, '未找到校友总会') if @organ.blank?
+          
+          render_json(@organ, API::V1::Entities::OrganizationAssocDetail)
+        end # end get
+        
         desc "获取校友组织信息"
         get do
           @organs = Organization.sorted

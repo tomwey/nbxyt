@@ -83,6 +83,7 @@
         image: '介绍图片'
         founded_on: '创建日期'
         sort: '显示顺序'
+        images: '详情图片'
       event:
         title: '活动主题'
         body: '活动详情'

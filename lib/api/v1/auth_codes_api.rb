@@ -4,6 +4,21 @@ module API
     class AuthCodesAPI < Grape::API
       
       resource :auth_codes, desc: "验证码接口" do
+        desc "校验验证码"
+        params do
+          requires :mobile, type: String, desc: "手机号，必须"
+          requires :code,   type: String, desc: "验证码"
+        end
+        get :check do
+          return render_error(1001, "不正确的手机号") unless check_mobile(mobile)
+          
+          auth_code = AuthCode.check_code_for(params[:mobile], params[:code])
+          return render_error(2004, '验证码无效') if auth_code.blank?
+          
+          render_json_no_data
+          
+        end # end get
+        
         desc "生成验证码"
         params do
           requires :mobile, type: String, desc: "手机号，必须"

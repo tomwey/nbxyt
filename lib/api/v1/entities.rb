@@ -24,9 +24,8 @@ module API
       class UserProfile < Base
         expose :uid, format_with: :null
         expose :mobile, format_with: :null
-        expose :nickname do |model, opts|
-          model.nickname || model.hack_mobile
-        end
+        expose :hack_mobile, format_with: :null
+        expose :nickname, format_with: :null
         expose :avatar do |model, opts|
           model.avatar.blank? ? "" : model.avatar_url(:large)
         end

@@ -10,7 +10,12 @@ module API
           requires :code,   type: String, desc: "验证码"
         end
         get :check do
+          
           return render_error(1001, "不正确的手机号") unless check_mobile(params[:mobile])
+          
+          # 是否已经注册检查
+          user = User.find_by(mobile: params[:mobile])
+          return render_error(1002, "#{params[:mobile]}已经注册") unless user.blank?
           
           auth_code = AuthCode.check_code_for(params[:mobile], params[:code])
           return render_error(2004, '验证码无效') if auth_code.blank?

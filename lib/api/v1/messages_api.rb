@@ -5,77 +5,104 @@ module API
       helpers API::SharedParams
       
       resource :messages, desc: "消息相关接口" do 
-        desc "获取未读消息条数"
+        desc "获取所有未读的消息总数"
         params do
-          requires :token, type: String, desc: "用户Token"
-        end 
+          requires :token,   type: String, desc: "用户Token"
+        end
         get :unread_count do
           user = authenticate!
           
-          # if user.read_sys_msg_at.blank?
-          #   where('(messages.to = ? and read_at is null) or (messages.to is null)', user.id)
-          # else
-          #   where('(messages.to = ? and read_at is null) or (messages.to is null and created_at > ?)', user.id, user.read_sys_msg_at)
-          # end
+          session_ids = MessageSession.where('sponsor_id = :user_id or actor_id = :user_id', user_id: user.id).pluck(:id)
+          unread_msg_count = Message.where(message_session_id: session_ids, unread: true, recipient_id: user.id).count
           
-          # 获取未读的系统公告
-          if user.read_sys_msg_at.blank?
-            sys_count = Message.where('messages.to is null').count
-          else
-            sys_count = Message.where('messages.to is null and created_at > ?', user.read_sys_msg_at).count
+          unread_notification_count = 0
+          
+          { count: unread_msg_count + unread_notification_count }
+        end # end get
+        
+        desc "发消息"
+        params do
+          requires :token,   type: String, desc: "用户Token"
+          requires :content, type: String, desc: "消息内容"
+          requires :to,      type: String, desc: "消息接收者UID"
+        end
+        post do
+          sender = authenticate!
+          
+          receiver = User.find_by(uid: params[:to])
+          if receiver.blank?
+            return render_error(4004, '接收者不存在')
           end
           
-          # 获取未读的消息
-          msg_count = Message.where('messages.to = ? and read_at is null', user.id).count
-          # count = Message.unread_for(user).count
+          if sender.id == receiver.id
+            return render_error(-2, '不能给自己发消息')
+          end
           
-          { count: (sys_count + msg_count), sys_msg_count: sys_count, msg_count: msg_count }
-        end # end get unread_count
+          # message_session = MessageSession.where(sponsor_id: sender.id, actor_id: receiver.id).first_or_create!
+          message_session = MessageSession.where('(sponsor_id = :sid and actor_id = :aid) or (sponsor_id = :aid and actor_id = :sid)', sid: sender.id, aid: receiver.id).first
+          if message_session.blank?
+            message_session = MessageSession.create!(sponsor_id: sender.id, actor_id: receiver.id);
+          end
+          
+          message = message_session.messages.create!(content: params[:content], sender_id: sender.id, recipient_id: receiver.id)
+          
+          render_json(message, API::V1::Entities::Message, { user: sender })
+        end # end post message
         
-        desc "获取系统公告，并修改状态为已读"
+        desc "获取用户所有的会话，支持分页"
         params do
-          requires :token, type: String, desc: "用户Token"
+          requires :token, type: String, desc: '用户Token'
           use :pagination
         end
-        get :notify do
+        get :sessions do
           user = authenticate!
           
-          # 只在第一次加载的时候标记未读消息为已读
-          if params[:page].blank? or params[:page].to_i <= 1
-            user.update_attribute(:read_sys_msg_at, Time.zone.now)
-          end
-          
-          @messages = Message.where('messages.to is null').order('id desc')
-          if params[:page]
-            @messages = @messages.paginate page: params[:page], per_page: page_size
-          end
-          
-          render_json(@messages, API::V1::Entities::Message)
-          
-        end # end get notify
+          @sessions = MessageSession.where('sponsor_id = :user_id or actor_id = :user_id', user_id: user.id).order('updated_at desc')
+          render_json(@sessions, API::V1::Entities::MessageSession, { user: user })
+        end # end get
         
-        desc "获取消息列表，并修改消息的状态为已读"
+        desc "获取某个session下面的所有消息"
         params do
-          requires :token, type: String, desc: "用户Token"
+          requires :token, type: String, desc: '用户Token'
+          requires :session_id, type: Integer, desc: '消息会话ID'
+          optional :need_sort,  type: Integer, desc: '是否需要服务器排序，值为0或1,0表示不需要排序，1表示需要排序, 默认为0'
           use :pagination
         end
-        get :list do
+        get '/sessions/:session_id' do
           user = authenticate!
           
-          # 只在第一次加载的时候标记未读消息为已读
-          if params[:page].blank? or params[:page].to_i <= 1
-            # user.update_attribute(:read_sys_msg_at, Time.zone.now)
-            Message.where('messages.to = ? and read_at is null', user.id).update_all(read_at: Time.zone.now)
+          @session = MessageSession.find_by(id: params[:session_id])
+          if @session.blank?
+            return render_error(4004, '消息会话不存在')
           end
           
-          @messages = Message.where('messages.to = ?', user.id).order('id desc')
+          if @session.sponsor_id != user.id and @session.actor_id != user.id
+            return render_error(-2, '你访问的不是自己的消息会话')
+          end
+          
+          if params[:page].blank? or params[:page].to_i <= 1
+            # 初次加载的时候，标记所有未读消息为已读
+            Message.where(message_session_id: @session.id, unread: true, recipient_id: user.id).update_all(unread: false)
+          end
+          
+          @messages = @session.messages.order('id desc')
+          
+          total = @messages.size
           if params[:page]
             @messages = @messages.paginate page: params[:page], per_page: page_size
+            total = @messages.total_entries
           end
           
-          render_json(@messages, API::V1::Entities::Message)
+          # 倒序
+          need_sort = (params[:need_sort] || 0).to_i
+          unless need_sort == 0
+            @messages = @messages.to_a
+            @messages.reverse!
+          end
           
-        end # end get list
+          render_json(@messages, API::V1::Entities::Message, { user: user }, total)
+        end # end get
+        
       end # end resource
       
     end

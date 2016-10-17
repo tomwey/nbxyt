@@ -18,6 +18,8 @@
       faculty: '院系'
       specialty: '专业'
       graduation: '年级'
+      message_session: '消息会话'
+      message: '消息'
       admin: "管理员"
       cpanel: '后台系统' # 此处并不存在真正意义的model，只是为了后台系统的面包屑导航根地址国际化成中文
       organization: '校友组织'
@@ -37,7 +39,6 @@
       merchant: '供应商'
       shipment: '收货地址'
       order: '订单'
-      message: '消息'
       common_config: '公共配置'
       donate: '捐赠'
       donate_apply: '捐赠意向'
@@ -84,6 +85,17 @@
         founded_on: '创建日期'
         sort: '显示顺序'
         images: '详情图片'
+      message_session:
+        messages_count: '消息数量'
+        sponsor_id: '发起者'
+        actor_id: '参与者'
+      message:
+        content: '内容'
+        msg_id: '消息ID'
+        sender_id: '发送者'
+        recipient_id: '接收者'
+        message_session: '所属会话'
+        unread: '是否未读'
       event:
         title: '活动主题'
         body: '活动详情'
@@ -147,12 +159,6 @@
         key: '配置名'
         value: '配置值'
         description: '配置说明'
-      message:
-        title: '标题'
-        content: '内容'
-        to: '用户'
-        read_at: '已读时间'
-        created_at: '创建时间'
       site_config:
         key: "配置名称"
         value: "配置值"

@@ -1,22 +1,32 @@
 class Message < ActiveRecord::Base
-  validates :content, presence: true
+  belongs_to :message_session, counter_cache: true
   
-  belongs_to :user, foreign_key: 'to'
+  belongs_to :sender,    class_name: 'User', foreign_key: 'sender_id'
+  belongs_to :recipient, class_name: 'User', foreign_key: 'recipient_id'
   
-  after_create :deliver_msg
-  def deliver_msg
-    # return if user.blank? or user.uid.blank? or content.blank?
-    
-    # 发送通知
-    # white_list_types = %(Channel )
-    # PushService.push_to(content, [user.uid])
+  validates :content, :sender_id, :recipient_id, :message_session_id, presence: true
+  
+  before_create :generate_msg_id
+  def generate_msg_id
+    self.msg_id = SecureRandom.uuid.gsub('-', '') if self.msg_id.blank?
   end
   
-  def self.unread_for(user)
-    if user.read_sys_msg_at.blank?
-      where('(messages.to = ? and read_at is null) or (messages.to is null)', user.id)
+  def from_me_for?(opts)
+    if opts.blank?
+      false
     else
-      where('(messages.to = ? and read_at is null) or (messages.to is null and created_at > ?)', user.id, user.read_sys_msg_at)
+      opts = opts[:opts]
+      if opts.blank?
+        false
+      else
+        user = opts[:user]
+        if user.blank?
+          false
+        else
+          user.id == sender_id
+        end
+      end
     end
   end
+
 end

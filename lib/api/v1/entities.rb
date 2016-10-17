@@ -20,15 +20,18 @@ module API
         end
       end
       
-      # 用户基本信息
-      class UserProfile < Base
+      class SimpleUser < Base
         expose :uid, format_with: :null
-        expose :mobile, format_with: :null
-        expose :hack_mobile, format_with: :null
         expose :nickname, format_with: :null
+        expose :hack_mobile, format_with: :null
         expose :avatar do |model, opts|
           model.avatar.blank? ? "" : model.avatar_url(:large)
         end
+      end
+      
+      # 用户基本信息
+      class UserProfile < SimpleUser
+        expose :mobile, format_with: :null
         expose :realname, format_with: :null
         expose :stu_no, format_with: :null
         expose :faculty do |model, opts|
@@ -142,6 +145,30 @@ module API
         expose :body
         expose :latest_events, using: API::V1::Entities::Event do |model, opts|
           model.all_latest_events
+        end
+      end
+      
+      class Message < Base
+        expose :msg_id
+        expose :content
+        expose :is_from_me do |model, opts|
+          model.from_me_for?(opts)
+        end
+        expose :created_at, as: :time, format_with: :chinese_datetime
+        expose :sender, using: API::V1::Entities::SimpleUser
+        expose :recipient, using: API::V1::Entities::SimpleUser
+      end
+      
+      class MessageSession < Base
+        expose :user, using: API::V1::Entities::SimpleUser do |model, opts|
+          model.user_info_for(opts)
+        end
+        expose :unread_count do |model, opts|
+          model.unread_count_for(opts)
+        end
+        expose :updated_at, as: :time, format_with: :chinese_datetime
+        expose :latest_message, using: API::V1::Entities::Message do |model, opts|
+          model.messages.order('id desc').first
         end
       end
       
@@ -334,15 +361,6 @@ module API
           model.ad_contents.map { |file| file.url }
         end
         expose :ad_link, if: proc { |a| a.ad_type == 2 and a.ad_link.present? }
-      end
-      
-      # 消息
-      class Message < Base
-        expose :title do |model, opts|
-          model.title || '系统公告'
-        end#, format_with: :null
-        expose :content, as: :body
-        expose :created_at, format_with: :chinese_datetime
       end
       
       # 俱乐部

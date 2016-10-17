@@ -20,12 +20,36 @@ module API
         end
       end
       
+      class Specialty < Base
+        expose :name
+      end
+      
+      class Faculty < Base
+        expose :name
+        expose :specialties, using: API::V1::Entities::Specialty do |model, opts|
+          model.specialties.order('sort desc, id desc')
+        end
+      end
+      
+      class Graduation < Base
+        expose :name
+      end
+      
       class SimpleUser < Base
         expose :uid, format_with: :null
         expose :nickname, format_with: :null
         expose :hack_mobile, format_with: :null
         expose :avatar do |model, opts|
           model.avatar.blank? ? "" : model.avatar_url(:large)
+        end
+      end
+      
+      class SimpleUser2 < SimpleUser
+        expose :specialty do |model, opts|
+          model.specialty.try(:name) || ''
+        end
+        expose :graduation do |model, opts|
+          model.graduation.try(:name) || ''
         end
       end
       
@@ -48,21 +72,6 @@ module API
       # 用户详情
       class User < UserProfile
         expose :private_token, as: :token, format_with: :null
-      end
-      
-      class Specialty < Base
-        expose :name
-      end
-      
-      class Faculty < Base
-        expose :name
-        expose :specialties, using: API::V1::Entities::Specialty do |model, opts|
-          model.specialties.order('sort desc, id desc')
-        end
-      end
-      
-      class Graduation < Base
-        expose :name
       end
       
       class Eventable < Base

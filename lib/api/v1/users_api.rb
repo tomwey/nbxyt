@@ -351,12 +351,12 @@ module API
       resource :users, desc: '同学录相关接口' do
         desc "获取校友信息支持搜索功能"
         params do
-          requires :token, type: String, desc: '用户认证Token'
+          # requires :token, type: String, desc: '用户认证Token'
           optional :q,     type: String, desc: '关键字'
           use :pagination
         end
         get do
-          authenticate!
+          # authenticate!
           
           @users = User.order('id desc')
           if params[:q] && params[:q].strip
@@ -366,7 +366,7 @@ module API
             @users = @users.paginate page: params[:page], per_page: page_size
           end
           
-          render_json(@users, API::V1::Entities::UserProfile)
+          render_json(@users, API::V1::Entities::SimpleUser2)
         end # end
         
         desc "获取校友详情"

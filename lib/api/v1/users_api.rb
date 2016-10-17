@@ -210,6 +210,25 @@ module API
           end
         end # end update_avatar
         
+        desc "修改头像，上传的图片经过base64编码"
+        params do
+          requires :token,  type: String, desc: "用户认证Token, 必须"
+          requires :avatar, type: String, desc: "头像图片base64编码字符串"
+        end
+        post :update_base64_avatar do
+          user = authenticate!
+          
+          if params[:avatar]
+            user.avatar = decode_base64_image(params[:avatar])
+          end
+          
+          if user.save
+            render_json(user, API::V1::Entities::User)
+          else
+            render_error(1006, user.errors.full_messages.join(","))
+          end
+        end # end update_avatar
+        
         desc "修改昵称"
         params do
           requires :token,    type: String, desc: "用户认证Token, 必须"

@@ -260,6 +260,10 @@ module API
           # 手机号检测
           return render_error(1001, "不正确的手机号") unless check_mobile(params[:mobile])
           
+          # 是否已经注册检查
+          new_user = User.find_by(mobile: params[:mobile])
+          return render_error(1002, "#{params[:mobile]}已经存在，请换一个手机号") unless new_user.blank?
+          
           # 检查验证码是否有效
           auth_code = AuthCode.check_code_for(params[:mobile], params[:code])
           return render_error(2004, '验证码无效') if auth_code.blank?

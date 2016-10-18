@@ -351,16 +351,23 @@ module API
       resource :users, desc: '同学录相关接口' do
         desc "获取校友信息支持搜索功能"
         params do
-          # requires :token, type: String, desc: '用户认证Token'
+          optional :token, type: String, desc: '用户认证Token'
           optional :q,     type: String, desc: '关键字'
           use :pagination
         end
         get do
-          # authenticate!
+          if params[:token]
+            user = User.find_by(private_token: params[:token])
+          else
+            user = nil
+          end
           
           @users = User.order('id desc')
+          if user
+            @users = @users.where.not(id: user.id)
+          end
           if params[:q] && params[:q].strip
-            @users = @users.joins(:faculty, :specialty, :graduation).where('nickname like :q or realname like :q or mobile like :q or faculties.name like :q or specialties.name like :q or graduations.name like :q', q: "%#{params[:q].strip}%")
+            @users = @users.joins(:faculty, :specialty, :graduation).where("nickname like :q or realname like :q or mobile like :q or faculties.name like :q or specialties.name like :q or graduations.name like :q", q: "%#{params[:q].strip}%")
           end
           if params[:page]
             @users = @users.paginate page: params[:page], per_page: page_size

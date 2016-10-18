@@ -26,7 +26,7 @@ module API
           requires :content, type: String, desc: "消息内容"
           requires :to,      type: String, desc: "消息接收者UID"
         end
-        post do
+        post :send do
           sender = authenticate!
           
           receiver = User.find_by(uid: params[:to])
@@ -64,20 +64,21 @@ module API
         desc "获取某个session下面的所有消息"
         params do
           requires :token, type: String, desc: '用户Token'
-          requires :session_id, type: Integer, desc: '消息会话ID'
+          requires :to,    type: String, desc: '消息接收方UID'
           optional :need_sort,  type: Integer, desc: '是否需要服务器排序，值为0或1,0表示不需要排序，1表示需要排序, 默认为0'
           use :pagination
         end
-        get '/sessions/:session_id' do
+        get do
           user = authenticate!
           
-          @session = MessageSession.find_by(id: params[:session_id])
-          if @session.blank?
-            return render_error(4004, '消息会话不存在')
+          to_user = User.find_by(uid: params[:to])
+          if to_user.blank?
+            return render_error(4004, '消息接收者不存在')
           end
           
-          if @session.sponsor_id != user.id and @session.actor_id != user.id
-            return render_error(-2, '你访问的不是自己的消息会话')
+          @session = MessageSession.where('(sponsor_id = :sid and actor_id = :aid) or (sponsor_id = :aid and actor_id = :sid)', sid: sender.id, aid: receiver.id).first
+          if @session.blank?
+            return render_error(-5, '消息会话不存在')
           end
           
           if params[:page].blank? or params[:page].to_i <= 1

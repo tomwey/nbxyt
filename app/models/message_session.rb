@@ -15,6 +15,10 @@ class MessageSession < ActiveRecord::Base
     @count ||= messages.where(unread: true, recipient_id: user.id).count
   end
   
+  def self.session_for(sender_id, receiver_id)
+    where("(sponsor_id = :id1 and actor_id = :id2) or (sponsor_id = :id2 and actor_id = :id1)", id1: sender_id, id2: receiver_id).first
+  end
+  
   def user_info_for(opts)
     if opts.blank?
       nil

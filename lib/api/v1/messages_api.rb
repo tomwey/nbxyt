@@ -38,8 +38,7 @@ module API
             return render_error(-2, '不能给自己发消息')
           end
           
-          # message_session = MessageSession.where(sponsor_id: sender.id, actor_id: receiver.id).first_or_create!
-          message_session = MessageSession.where('(sponsor_id = :sid and actor_id = :aid) or (sponsor_id = :aid and actor_id = :sid)', sid: sender.id, aid: receiver.id).first
+          message_session = MessageSession.session_for(sender.id, receiver.id)
           if message_session.blank?
             message_session = MessageSession.create!(sponsor_id: sender.id, actor_id: receiver.id);
           end
@@ -57,8 +56,8 @@ module API
         get :sessions do
           user = authenticate!
           
-          @sessions = MessageSession.where('sponsor_id = :user_id or actor_id = :user_id', user_id: user.id).order('updated_at desc')
-          render_json(@sessions, API::V1::Entities::MessageSession, { user: user })
+          message_sessions = MessageSession.where('sponsor_id = :user_id or actor_id = :user_id', user_id: user.id).order('updated_at desc')
+          render_json(message_sessions, API::V1::Entities::MessageSession, { user: user })
         end # end get
         
         desc "获取某个session下面的所有消息"
@@ -76,17 +75,17 @@ module API
             return render_error(4004, '消息接收者不存在')
           end
           
-          @session = MessageSession.where('(sponsor_id = :sid and actor_id = :aid) or (sponsor_id = :aid and actor_id = :sid)', sid: sender.id, aid: receiver.id).first
-          if @session.blank?
+          message_session = MessageSession.session_for(user.id, to_user.id)
+          if message_session.blank?
             return render_error(-5, '消息会话不存在')
           end
           
           if params[:page].blank? or params[:page].to_i <= 1
             # 初次加载的时候，标记所有未读消息为已读
-            Message.where(message_session_id: @session.id, unread: true, recipient_id: user.id).update_all(unread: false)
+            Message.where(message_session_id: message_session.id, unread: true, recipient_id: user.id).update_all(unread: false)
           end
           
-          @messages = @session.messages.order('id desc')
+          @messages = message_session.messages.order('id desc')
           
           total = @messages.size
           if params[:page]

@@ -353,19 +353,32 @@ module API
         params do
           optional :token, type: String, desc: '用户认证Token'
           optional :q,     type: String, desc: '关键字'
+          optional :owner_type, type: String, desc: '所有者类型，值为Club或者Organization'
+          optional :owner_id,   type: Integer, desc: '所有者对象ID'
           use :pagination
         end
         get do
+          if params[:owner_type] && params[:owner_id]
+            klass = params[:owner_type].classify.constantize
+            @owner = klass.find_by(id: params[:owner_id])
+            if @owner.blank?
+              return render_error(4004, '未找到对象')
+            end
+            @users = @owner.users.order('relationships.id desc')
+          else
+            @users = User.order('id desc')
+          end
+          
+          # 去掉自己
           if params[:token]
             user = User.find_by(private_token: params[:token])
           else
             user = nil
           end
-          
-          @users = User.order('id desc')
           if user
             @users = @users.where.not(id: user.id)
           end
+          
           if params[:q] && params[:q].strip
             @users = @users.joins(:faculty, :specialty, :graduation).where("nickname like :q or realname like :q or mobile like :q or faculties.name like :q or specialties.name like :q or graduations.name like :q", q: "%#{params[:q].strip}%")
           end

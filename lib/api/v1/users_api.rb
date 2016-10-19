@@ -382,11 +382,14 @@ module API
           if params[:q] && params[:q].strip
             @users = @users.joins(:faculty, :specialty, :graduation).where("nickname like :q or realname like :q or mobile like :q or faculties.name like :q or specialties.name like :q or graduations.name like :q", q: "%#{params[:q].strip}%")
           end
+          
+          total = @users.size
           if params[:page]
             @users = @users.paginate page: params[:page], per_page: page_size
+            total = @users.total_entries;
           end
           
-          render_json(@users, API::V1::Entities::SimpleUser2)
+          render_json(@users, API::V1::Entities::SimpleUser2, total)
         end # end
         
         desc "获取校友详情"

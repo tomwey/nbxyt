@@ -56,7 +56,7 @@ module API
         get :sessions do
           user = authenticate!
           
-          message_sessions = MessageSession.where('sponsor_id = :user_id or actor_id = :user_id', user_id: user.id).order('updated_at desc')
+          message_sessions = MessageSession.where('sponsor_id = :user_id or actor_id = :user_id', user_id: user.id).order('last_message_send_at desc, id desc')
           render_json(message_sessions, API::V1::Entities::MessageSession, { user: user })
         end # end get
         

@@ -3,7 +3,7 @@ class MessageSession < ActiveRecord::Base
   belongs_to :actor,   class_name: 'User', foreign_key: 'actor_id'
   
   validates :actor_id, :sponsor_id, presence: true
-  has_many :messages
+  has_many :messages, dependent: :destroy
   
   def unread_count_for(opts)
     return 0 if opts.blank?

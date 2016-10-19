@@ -28,5 +28,11 @@ class Message < ActiveRecord::Base
       end
     end
   end
+  
+  after_create :update_last_message_send_at
+  def update_last_message_send_at
+    message_session.last_message_send_at = Time.zone.now
+    message_session.save!
+  end
 
 end

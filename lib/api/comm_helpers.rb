@@ -105,6 +105,14 @@ module API
       # 返回当前用户
       current_user
     end # end authenticate!
+    
+    # 身份检查
+    def need_valid!
+      error!({"code" => -20, "message" => "您的身份未确认，不能使用该功能"}, 200) unless current_user.is_valid
+      
+      # 返回当前用户
+      current_user
+    end
   
     # 手机号验证
     def check_mobile(mobile)

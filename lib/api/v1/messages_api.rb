@@ -29,6 +29,9 @@ module API
         post :send do
           sender = authenticate!
           
+          # 校友身份验证
+          sender = need_valid!
+          
           receiver = User.find_by(uid: params[:to])
           if receiver.blank?
             return render_error(4004, '接收者不存在')

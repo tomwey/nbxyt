@@ -13,6 +13,8 @@ module API
         post '/organization/join' do
           user = authenticate!
           
+          user = need_valid!
+          
           organ = Organization.find_by(id: params[:id])
           return render_error(4004, '不存在的校友会') if organ.blank?
           
@@ -32,6 +34,8 @@ module API
         end
         post '/organization/cancel_join' do
           user = authenticate!
+          
+          user = need_valid!
           
           organ = Organization.find_by(id: params[:id])
           return render_error(4004, '不存在的校友会') if organ.blank?
@@ -54,6 +58,8 @@ module API
         post '/club/join' do
           user = authenticate!
           
+          user = need_valid!
+          
           club = Club.find_by(id: params[:id])
           return render_error(4004, '不存在的校友俱乐部') if club.blank?
           
@@ -73,6 +79,8 @@ module API
         end
         post '/club/cancel_join' do
           user = authenticate!
+          
+          user = need_valid!
           
           club = Club.find_by(id: params[:id])
           return render_error(4004, '不存在的校友俱乐部') if club.blank?

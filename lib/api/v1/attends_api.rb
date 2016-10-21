@@ -13,6 +13,8 @@ module API
         post do
           user = authenticate!
           
+          user = need_valid!
+          
           event = Event.find_by(id: params[:event_id])
           
           return render_error(4004, '未找到活动') if event.blank?
@@ -31,6 +33,8 @@ module API
         end
         post :delete do
           user = authenticate!
+          
+          user = need_valid!
           
           event = Event.find_by(id: params[:event_id])
           

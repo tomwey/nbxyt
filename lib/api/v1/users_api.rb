@@ -400,6 +400,9 @@ module API
         get '/:uid' do
           authenticate!
           
+          # 身份确认
+          need_valid!
+          
           @user = User.find_by(uid: params[:uid])
           
           if @user.blank?
